@@ -1,6 +1,6 @@
 hack = {
 	getters: {
-	get client() { return temp1.o[1].exports; },
+        get client() { return temp1.o[1].exports; },
         get gf() { return temp1.o[5].exports; },
         get gp() { return temp1.o[6].exports; },
         get graphics() { return temp1.o[7].exports; },
@@ -19,10 +19,7 @@ hack = {
         get network() { return temp1.o[36].exports; },
         get jquery() { return temp1.o[69].exports; },
         get physics() { return temp1.o[332].exports; },
-        get me() { return hack.getters.mode.player.gpData; },
-        get ray() { return hack.getters.me.ray; },
-        get velocity() { return hack.getters.me.p.velocity; },
-        get otherPlayers() { return hack.getters.mode.otherPlayers; }
+        get me() { return hack.getters.mode.player.gpData; }
     },
 	vars: {
 		mult: 1,
@@ -32,16 +29,16 @@ hack = {
 		multSpdIsOn: false,
 		modeIsOn: false,
 		ghost1: false,
-        ghost2: false,
+		ghost2: false,
 		immIsOn: false,
 		MMGIsOn: false,
 		isPlayerDead: false,
 		interTpToOtherIsOn: false,
 		delay: 1000,
 		inter: 250,
-        get mass() {return hack.getters.me.p.mass},
-        get invMass() {return hack.getters.me.p.invMass},
-        get collisionResponse() {return hack.getters.me.p.collisionResponse}
+		get mass() {return hack.getters.me.p.mass},
+		get invMass() {return hack.getters.me.p.invMass},
+		get collisionResponse() {return hack.getters.me.p.collisionResponse}
 	},
 	suppFuncs: {
 		getMult: () => {
@@ -110,7 +107,7 @@ hack = {
 				hack.getters.velocity[1] = 0
 				hack.functions.godModeEnable()
 				hack.functions.immEnable()
-                hack.vars.ghost2 = true
+				hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
 				if (!hack.vars.multSpdIsOn) {
 					hack.functions.multSpdEnable()
@@ -134,7 +131,7 @@ hack = {
 		},
 		godModeEnable: () => {
 			hack.vars.ghost1 = true
-            hack.getters.me.p.collisionResponse = false
+			hack.getters.me.p.collisionResponse = false
 			hack.getters.me.p.mass = 0
 			hack.vars.modeIsOn = true
 			hack.getters.velocity[0] = 0
@@ -142,7 +139,7 @@ hack = {
 		},
 		godModeDisable: () => {
 			hack.vars.ghost1 = false
-            hack.getters.me.p.collisionResponse = true
+			hack.getters.me.p.collisionResponse = true
 			hack.getters.me.p.mass = 1
 			hack.vars.modeIsOn = false
 			hack.getters.velocity[0] = 0
@@ -234,13 +231,13 @@ hack.getters.mode.onChangeMap = function(e) {
 		hack.vars.isPlayerDead = false
 		hack.vars.ghost2 = false
 		if (!hack.vars.modeIsOn) {
-            hack.functions.godModeDisable()
+			hack.functions.godModeDisable()
 			hack.functions.immDisable()
 			hack.functions.multSpdDisable()
 		} else {
 			hack.functions.godModeEnable()
 			hack.functions.immEnable()
-            hack.getters.me.p.collisionResponse = false
+			hack.getters.me.p.collisionResponse = false
 		}
 	}
 
