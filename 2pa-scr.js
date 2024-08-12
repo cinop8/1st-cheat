@@ -1,6 +1,6 @@
 hack = {
 	getters: {
-		get client() { return temp1.o[1].exports; },
+	get client() { return temp1.o[1].exports; },
         get gf() { return temp1.o[5].exports; },
         get gp() { return temp1.o[6].exports; },
         get graphics() { return temp1.o[7].exports; },
