@@ -1,66 +1,26 @@
 hack = {
-	getters: {
-		get client() {
-			return temp1.o[1].exports
-		},
-		get gf() {
-			return temp1.o[5].exports
-		},
-		get gp() {
-			return temp1.o[6].exports
-		},
-		get graphics() {
-			return temp1.o[7].exports
-		},
-		get guiComponents_afk() {
-			return temp1.o[8].exports
-		},
-		get guiComponents_kick() {
-			return temp1.o[9].exports
-		},
-		get mode() {
-			return temp1.o[11].exports
-		},
-		get envirData() {
-			return temp1.o[15].exports
-		},
-		get kickPlayer() {
-			return temp1.o[17].exports
-		},
-		get myStatus() {
-			return temp1.o[20].exports
-		},
-		get othersPlayerData() {
-			return temp1.o[23].exports
-		},
-		get othersPlayerMsg() {
-			return temp1.o[24].exports
-		},
-		get rGho() {
-			return temp1.o[26].exports
-		},
-		get timer() {
-			return temp1.o[28].exports
-		},
-		get modules_leaderboard() {
-			return temp1.o[32].exports
-		},
-		get modules_resultScreen() {
-			return temp1.o[35].exports
-		},
-		get network() {
-			return temp1.o[36].exports
-		},
-		get jquery() {
-			return temp1.o[69].exports
-		},
-		get physics() {
-			return temp1.o[332].exports
-		},
-		get me() {
-			return hack.getters.mode.player.gpData
-		}
-	},
+    getters: {
+        get client() { return temp1.o[1].exports; },
+        get gf() { return temp1.o[5].exports; },
+        get gp() { return temp1.o[6].exports; },
+        get graphics() { return temp1.o[7].exports; },
+        get guiComponents_afk() { return temp1.o[8].exports; },
+        get guiComponents_kick() { return temp1.o[9].exports; },
+        get mode() { return temp1.o[11].exports; },
+        get envirData() { return temp1.o[15].exports; },
+        get kickPlayer() { return temp1.o[17].exports; },
+        get myStatus() { return temp1.o[20].exports; },
+        get othersPlayerData() { return temp1.o[23].exports; },
+        get othersPlayerMsg() { return temp1.o[24].exports; },
+        get rGho() { return temp1.o[26].exports; },
+        get timer() { return temp1.o[28].exports; },
+        get modules_leaderboard() { return temp1.o[32].exports; },
+        get modules_resultScreen() { return temp1.o[35].exports; },
+        get network() { return temp1.o[36].exports; },
+        get jquery() { return temp1.o[69].exports; },
+        get physics() { return temp1.o[332].exports; },
+        get me() { return hack.getters.mode.player.gpData; }
+    },
 	vars: {
 		mult: 1,
 		lrSpd: 3,
@@ -278,52 +238,60 @@ hack.getters.mode.onChangeMap = function(e) {
 				}, 1e3)
 		}, 0)
 }
-document.getElementsByTagName('body')[0].onkeydown = function() {
-	if (event.keyCode == 113) {
-		if (!hack.vars.modeIsOn) {
-			hack.functions.godModeEnable()
-			hack.logFuncs.logModeIsOn()
-			hack.functions.multSpdEnable()
-		} else {
-			hack.functions.godModeDisable()
-			hack.logFuncs.logModeIsOn()
-			hack.functions.multSpdDisable()
-		}
-	}
-	if (event.keyCode == 36) {
-		hack.functions.tpSpawn()
-	}
-	if (event.keyCode == 35) {
-		hack.functions.tpDoor()
-	}
-	if (event.keyCode == 120) {
-		if (!hack.vars.MMGIsOn) {
-			hack.functions.MMGEnable()
-			hack.logFuncs.logMMGIsOn()
-		} else {
-			hack.functions.MMGDisable()
-			hack.logFuncs.logMMGIsOn()
-		}
-	}
-	if ((event.keyCode == 192 || event.keyCode == 190) && (hack.vars.modeIsOn)) {
-		hack.suppFuncs.setMult()
-		hack.logFuncs.logSpd()
-	}
-	if ((event.keyCode == 45) || (event.keyCode == 96)) {
-		hack.functions.setTpToOther(
-			hack.suppFuncs.getIndexByName(
-				prompt('Введите корректный никнейм. Чтобы выйти из интервала нажмите Esc.')
-			)
-		)
-	}
-	if (event.keyCode == 115) {
-		if (!hack.vars.immIsOn) {
-			hack.functions.immEnable(), hack.logFuncs.logImmIsOn()
-		} else {
-			hack.functions.immDisable(), hack.logFuncs.logImmIsOn()
-		}
-	}
-}
+document.body.onkeydown = (event) => {
+    const keyCode = event.keyCode;
+
+    switch (keyCode) {
+        case 113: // F2
+            if (!hack.vars.modeIsOn) {
+                hack.functions.godModeEnable();
+                hack.logFuncs.logModeIsOn();
+                hack.functions.multSpdEnable();
+            } else {
+                hack.functions.godModeDisable();
+                hack.logFuncs.logModeIsOn();
+                hack.functions.multSpdDisable();
+            }
+            break;
+        case 36: // Home
+            hack.functions.tpSpawn();
+            break;
+        case 35: // End
+            hack.functions.tpDoor();
+            break;
+        case 120: // F9
+            if (!hack.vars.MMGIsOn) {
+                hack.functions.MMGEnable();
+                hack.logFuncs.logMMGIsOn();
+            } else {
+                hack.functions.MMGDisable();
+                hack.logFuncs.logMMGIsOn();
+            }
+            break;
+        case 192: // ` (backtick) or 190 (dot)
+        case 190:
+            if (hack.vars.modeIsOn) {
+                hack.suppFuncs.setMult();
+                hack.logFuncs.logSpd();
+            }
+            break;
+        case 45: // Insert
+        case 96: // Num 0
+            const playerName = prompt('Введите корректный никнейм. Чтобы выйти из интервала нажмите Esc.');
+            const playerIndex = hack.suppFuncs.getIndexByName(playerName);
+            hack.functions.setTpToOther(playerIndex);
+            break;
+        case 115: // F4
+            if (!hack.vars.immIsOn) {
+                hack.functions.immEnable();
+                hack.logFuncs.logImmIsOn();
+            } else {
+                hack.functions.immDisable();
+                hack.logFuncs.logImmIsOn();
+            }
+            break;
+    }
+};
 
 
 function scrActivate() {
