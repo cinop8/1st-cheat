@@ -1,6 +1,6 @@
 hack = {
-    getters: {
-        get client() { return temp1.o[1].exports; },
+	getters: {
+		get client() { return temp1.o[1].exports; },
         get gf() { return temp1.o[5].exports; },
         get gp() { return temp1.o[6].exports; },
         get graphics() { return temp1.o[7].exports; },
@@ -19,24 +19,29 @@ hack = {
         get network() { return temp1.o[36].exports; },
         get jquery() { return temp1.o[69].exports; },
         get physics() { return temp1.o[332].exports; },
-        get me() { return hack.getters.mode.player.gpData; }
+        get me() { return hack.getters.mode.player.gpData; },
+        get ray() { return hack.getters.me.ray; },
+        get velocity() { return hack.getters.me.p.velocity; },
+        get otherPlayers() { return hack.getters.mode.otherPlayers; }
     },
 	vars: {
 		mult: 1,
 		lrSpd: 3,
 		udSpd: 3,
-		get totalSpd() {
-			return (((this.lrSpd + this.udSpd) / 2) * this.mult)
-		},
+		get totalSpd() {return (((this.lrSpd + this.udSpd) / 2) * this.mult)},
 		multSpdIsOn: false,
 		modeIsOn: false,
 		ghost1: false,
+        ghost2: false,
 		immIsOn: false,
 		MMGIsOn: false,
 		isPlayerDead: false,
 		interTpToOtherIsOn: false,
 		delay: 1000,
-		inter: 250
+		inter: 250,
+        get mass() {return hack.getters.me.p.mass},
+        get invMass() {return hack.getters.me.p.invMass},
+        get collisionResponse() {return hack.getters.me.p.collisionResponse}
 	},
 	suppFuncs: {
 		getMult: () => {
@@ -59,12 +64,12 @@ hack = {
 			}
 		},
 		getIndexByName: function(playerName) {
-			for (i = 0; i < hack.getters.mode.otherPlayers.length; i++) {
-				if (hack.getters.mode.otherPlayers[i]?.myName == playerName) {
+			for (i = 0; i < hack.getters.otherPlayers.length; i++) {
+				if (hack.getters.otherPlayers[i]?.myName == playerName) {
 					break
 				}
 			}
-			if (i == hack.getters.mode.otherPlayers.length) {
+			if (i == hack.getters.otherPlayers.length) {
 				return false
 			}
 			return i
@@ -83,8 +88,8 @@ hack = {
 		setTpToOther: function(playerIndex) {
 			if (!hack.vars.interTpToOtherIsOn && playerIndex) {
 				interTpToOther = setInterval(() => {
-					hack.getters.me.p.position[0] = hack.getters.mode.otherPlayers[playerIndex].gpData.p.position[0]
-					hack.getters.me.p.position[1] = hack.getters.mode.otherPlayers[playerIndex].gpData.p.position[1]
+					hack.getters.me.p.position[0] = hack.getters.otherPlayers[playerIndex].gpData.p.position[0]
+					hack.getters.me.p.position[1] = hack.getters.otherPlayers[playerIndex].gpData.p.position[1]
 				}, hack.vars.inter)
 				hack.vars.interTpToOtherIsOn = true
 			} else if (!playerIndex) {
@@ -101,12 +106,11 @@ hack = {
 				hack.getters.me.setAlpha(.3)
 				hack.getters.me.p.shapes[0].sensor = !0
 				hack.getters.me.p.gravityScale = 0
-				hack.getters.me.p.velocity[0] = 0
-				hack.getters.me.p.velocity[1] = 0
+				hack.getters.velocity[0] = 0
+				hack.getters.velocity[1] = 0
 				hack.functions.godModeEnable()
 				hack.functions.immEnable()
-				hack.modeIsOn = true
-				hack.immIsOn = true
+                hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
 				if (!hack.vars.multSpdIsOn) {
 					hack.functions.multSpdEnable()
@@ -130,19 +134,19 @@ hack = {
 		},
 		godModeEnable: () => {
 			hack.vars.ghost1 = true
-			hack.getters.mode.player.gpData.p.collisionResponse = false
+            hack.getters.me.p.collisionResponse = false
+			hack.getters.me.p.mass = 0
 			hack.vars.modeIsOn = true
-			hack.getters.mode.player.gpData.p.mass = 0
-			hack.getters.mode.player.gpData.p.velocity[0] = 0
-			hack.getters.mode.player.gpData.p.velocity[1] = 0
+			hack.getters.velocity[0] = 0
+			hack.getters.velocity[1] = 0
 		},
 		godModeDisable: () => {
 			hack.vars.ghost1 = false
-			hack.getters.mode.player.gpData.p.collisionResponse = true
+            hack.getters.me.p.collisionResponse = true
+			hack.getters.me.p.mass = 1
 			hack.vars.modeIsOn = false
-			hack.getters.mode.player.gpData.p.mass = 1
-			hack.getters.mode.player.gpData.p.velocity[0] = 0
-			hack.getters.mode.player.gpData.p.velocity[1] = 0
+			hack.getters.velocity[0] = 0
+			hack.getters.velocity[1] = 0
 		},
 		multSpdEnable: () => {
 			hack.vars.lrSpd *= hack.vars.mult
@@ -195,34 +199,18 @@ hack.getters.mode.onChangeMap = function(e) {
 	hack.getters.gp.list = hack.getters.gp.load(e, hack.getters.gp)
 	hack.getters.mode.syncArr = []
 	hack.getters.mode.ghost = !1
-	try {
-		scrActivate()
-		delete scrActivate
-	} catch {}
-	if (hack.vars.isPlayerDead == true) {
-		hack.functions.godModeDisable()
-		hack.functions.immDisable()
-		hack.vars.modeIsOn = false
-		hack.vars.immIsOn = false
-		hack.vars.isPlayerDead = false
-		if (hack.vars.multSpdIsOn) {
-			hack.functions.multSpdDisable()
-			hack.vars.multSpdIsOn = false
-		}
-	}
 	hack.getters.mode.tweenObjects = []
 	hack.getters.mode.defineBehaviours(hack.getters.gp.list, hack.getters.mode.syncArr, hack.getters.gp)
 	hack.getters.mode.md.mobile() && hack.getters.mode.setupTouchButtons(!1)
 	hack.getters.mode.setMyBio()
-	hack.getters.mode.setBio(hack.getters.mode.player.gpData, hack.getters.mode.myName, hack.getters.mode.mySkin, hack.getters.mode.whatBro, hack.getters.mode.chatColor, hack.getters.mode.teamColor);
-	for (var t, n = 0; n < hack.getters.mode.otherPlayers.length; n++)
-		void 0 !== hack.getters.mode.otherPlayers[n] && null != hack.getters.mode.otherPlayers[n] && (t = hack.getters.mode.otherPlayers[n].gpData.g.myIndex,
-			hack.getters.mode.otherPlayers[n].gpData = hack.getters.mode.createPlayer(),
-			hack.getters.mode.otherPlayers[n].gpData.g.myIndex = t,
-			hack.getters.mode.otherPlayers[n].gpData.p.gravityScale = 0,
-			hack.getters.gp.gWorld.removeChild(hack.getters.mode.otherPlayers[n].gpData.g),
-			hack.getters.gp.gWorld.mid.addChild(hack.getters.mode.otherPlayers[n].gpData.g),
-			hack.getters.mode.setBio(hack.getters.mode.otherPlayers[n].gpData, hack.getters.mode.otherPlayers[n].myName, hack.getters.mode.otherPlayers[n].mySkin, hack.getters.mode.otherPlayers[n].whatBro, hack.getters.mode.otherPlayers[n].chatColor, hack.getters.mode.otherPlayers[n].teamColor));
+	hack.getters.mode.setBio(hack.getters.me, hack.getters.mode.myName, hack.getters.mode.mySkin, hack.getters.mode.whatBro, hack.getters.mode.chatColor, hack.getters.mode.teamColor);
+	for (var t, n = 0; n < hack.getters.otherPlayers.length; n++)
+		void 0 !== hack.getters.otherPlayers[n] && null != hack.getters.otherPlayers[n] && (t = hack.getters.otherPlayers[n].gpData.g.myIndex,
+			hack.getters.otherPlayers[n].gpData = hack.getters.mode.createPlayer(),
+			hack.getters.otherPlayers[n].gpData.g.myIndex = t,
+			hack.getters.gp.gWorld.removeChild(hack.getters.otherPlayers[n].gpData.g),
+			hack.getters.gp.gWorld.mid.addChild(hack.getters.otherPlayers[n].gpData.g),
+			hack.getters.mode.setBio(hack.getters.otherPlayers[n].gpData, hack.getters.otherPlayers[n].myName, hack.getters.otherPlayers[n].mySkin, hack.getters.otherPlayers[n].whatBro, hack.getters.otherPlayers[n].chatColor, hack.getters.otherPlayers[n].teamColor));
 	void 0 === hack.getters.mode.firstTimeMapChange && (hack.getters.mode.firstTimeMapChange = !0),
 		hack.getters.mode.smallStepTimeId = setTimeout(function() {
 			document.getElementById("startTime").style.display = "inherit",
@@ -237,83 +225,88 @@ hack.getters.mode.onChangeMap = function(e) {
 							document.getElementById("startTime").style.display = "none")
 				}, 1e3)
 		}, 0)
+
+	try {
+		scrActivate()
+		delete scrActivate
+	} catch {}
+	if (hack.vars.isPlayerDead) {
+		hack.vars.isPlayerDead = false
+		hack.vars.ghost2 = false
+		if (!hack.vars.modeIsOn) {
+            hack.functions.godModeDisable()
+			hack.functions.immDisable()
+			hack.functions.multSpdDisable()
+		} else {
+			hack.functions.godModeEnable()
+			hack.functions.immEnable()
+            hack.getters.me.p.collisionResponse = false
+		}
+	}
+
 }
 document.body.onkeydown = (event) => {
-    const keyCode = event.keyCode;
+	const keyCode = event.keyCode;
 
-    switch (keyCode) {
-        case 113: // F2
-            if (!hack.vars.modeIsOn) {
-                hack.functions.godModeEnable();
-                hack.logFuncs.logModeIsOn();
-                hack.functions.multSpdEnable();
-            } else {
-                hack.functions.godModeDisable();
-                hack.logFuncs.logModeIsOn();
-                hack.functions.multSpdDisable();
-            }
-            break;
-        case 36: // Home
-            hack.functions.tpSpawn();
-            break;
-        case 35: // End
-            hack.functions.tpDoor();
-            break;
-        case 120: // F9
-            if (!hack.vars.MMGIsOn) {
-                hack.functions.MMGEnable();
-                hack.logFuncs.logMMGIsOn();
-            } else {
-                hack.functions.MMGDisable();
-                hack.logFuncs.logMMGIsOn();
-            }
-            break;
-        case 192: // ` (backtick) or 190 (dot)
-        case 190:
-            if (hack.vars.modeIsOn) {
-                hack.suppFuncs.setMult();
-                hack.logFuncs.logSpd();
-            }
-            break;
-        case 45: // Insert
-        case 96: // Num 0
-            const playerName = prompt('Введите корректный никнейм. Чтобы выйти из интервала нажмите Esc.');
-            const playerIndex = hack.suppFuncs.getIndexByName(playerName);
-            hack.functions.setTpToOther(playerIndex);
-            break;
-        case 115: // F4
-            if (!hack.vars.immIsOn) {
-                hack.functions.immEnable();
-                hack.logFuncs.logImmIsOn();
-            } else {
-                hack.functions.immDisable();
-                hack.logFuncs.logImmIsOn();
-            }
-            break;
-    }
+	switch (keyCode) {
+		case 113: // F2
+			if (!hack.vars.modeIsOn) {
+				hack.functions.godModeEnable();
+				hack.logFuncs.logModeIsOn();
+				hack.functions.multSpdEnable();
+			} else {
+				hack.functions.godModeDisable();
+				hack.logFuncs.logModeIsOn();
+				hack.functions.multSpdDisable();
+			}
+			break;
+		case 36: // Home
+			hack.functions.tpSpawn();
+			break;
+		case 35: // End
+			hack.functions.tpDoor();
+			break;
+		case 120: // F9
+			if (!hack.vars.MMGIsOn) {
+				hack.functions.MMGEnable();
+				hack.logFuncs.logMMGIsOn();
+			} else {
+				hack.functions.MMGDisable();
+				hack.logFuncs.logMMGIsOn();
+			}
+			break;
+		case 192: // ` (backtick) or 190 (dot)
+		case 190:
+			if (hack.vars.modeIsOn) {
+				hack.suppFuncs.setMult();
+				hack.logFuncs.logSpd();
+			}
+			break;
+		case 45: // Insert
+		case 96: // Num 0
+			const playerName = prompt('Введите корректный никнейм. Чтобы выйти из интервала нажмите Esc.');
+			const playerIndex = hack.suppFuncs.getIndexByName(playerName);
+			hack.functions.setTpToOther(playerIndex);
+			break;
+		case 115: // F4
+			if (!hack.vars.immIsOn) {
+				hack.functions.immEnable();
+				hack.logFuncs.logImmIsOn();
+			} else {
+				hack.functions.immDisable();
+				hack.logFuncs.logImmIsOn();
+			}
+			break;
+	}
 };
 
 
 function scrActivate() {
-    Object.defineProperty(hack.vars, 'inter', {
-	    enumerable: false
-    });
+	Object.defineProperty(hack.vars, 'inter', {
+		enumerable: false
+	});
 	hack.functions.MMGEnable()
 	hack.functions.MMGDisable()
-	let timerSetModes = setTimeout(function setModes() {
-		if (hack.vars.modeIsOn) {
-			hack.functions.godModeEnable()
-		}
-		if (hack.vars.immIsOn) {
-			hack.functions.immEnable()
-		}
-		if (hack.getters.mode.timer > 149600 || hack.getters.mode.timer < 1100) {
-			hack.vars.delay = 150
-		} else {
-			hack.vars.delay = 1000
-		}
-		let timerNes = setTimeout(setModes, hack.vars.delay)
-	}, hack.vars.delay)
 	setInterval(() => {
 		o = []
 		for (let i in hack.vars) {
@@ -324,19 +317,19 @@ function scrActivate() {
 	document.body.insertAdjacentHTML("beforebegin", `
 <div id="someData" style="display:inherit;width: 100%; position: fixed;top: 25px;left: 0px;width: auto;height: auto; text-align: left; font-size: 14px; background: rgb(0, 0, 0); color: rgb(255, 255, 255); opacity: 0.7; padding: 2px 2px; display: inherit;"></div>
 `)
-document.getElementById('timer').style.background = 'rgb(0, 0, 0)';
-document.getElementById('timer').style.color = 'rgb(255, 255, 255)';
-document.getElementById('mapCredits').style.background = 'rgb(0, 0, 0)';
-document.getElementById('mapCredits').style.color = 'rgb(255, 255, 255)'
-document.getElementById('leaderboard').style.background = 'rgb(0, 0, 0)';
-document.getElementById('timer').style.opacity = 0.7
-document.getElementById('leaderboard').style.opacity = 0.7
-document.getElementById('mapCredits').style.opacity = 0.7
+	document.getElementById('timer').style.background = 'rgb(0, 0, 0)';
+	document.getElementById('timer').style.color = 'rgb(255, 255, 255)';
+	document.getElementById('mapCredits').style.background = 'rgb(0, 0, 0)';
+	document.getElementById('mapCredits').style.color = 'rgb(255, 255, 255)'
+	document.getElementById('leaderboard').style.background = 'rgb(0, 0, 0)';
+	document.getElementById('timer').style.opacity = 0.7
+	document.getElementById('leaderboard').style.opacity = 0.7
+	document.getElementById('mapCredits').style.opacity = 0.7
 }
 
 hack.getters.mode.playerMovement = function(e) {
-	if (hack.getters.mode.moveRight && (hack.getters.me.p.velocity[0] = hack.vars.lrSpd * hack.vars.mult),
-		hack.getters.mode.moveLeft && (hack.getters.me.p.velocity[0] = -hack.vars.lrSpd * hack.vars.mult),
+	if (hack.getters.mode.moveRight && (hack.getters.velocity[0] = hack.vars.lrSpd * hack.vars.mult),
+		hack.getters.mode.moveLeft && (hack.getters.velocity[0] = -hack.vars.lrSpd * hack.vars.mult),
 		hack.getters.mode.moveUp)
 		for (var t = hack.getters.me.getX(),
 				n = hack.getters.me.getY(),
@@ -345,9 +338,9 @@ hack.getters.mode.playerMovement = function(e) {
 				s = n + 50 - 1,
 				a = r + i * (30 / 11),
 				u = 50 + s;
-			if (hack.getters.me.ray.from = [hack.getters.physics.xAxis(o, 0),
+			if (hack.getters.ray.from = [hack.getters.physics.xAxis(o, 0),
 					hack.getters.physics.yAxis(s, 0)
-				], hack.getters.me.ray.to = [hack.getters.physics.xAxis(a, 0),
+				], hack.getters.ray.to = [hack.getters.physics.xAxis(a, 0),
 					hack.getters.physics.yAxis(u, 0)
 				], enableRay && (o = hack.getters.graphics.createLine({
 					from: {
@@ -359,25 +352,25 @@ hack.getters.mode.playerMovement = function(e) {
 						y: u
 					}
 				}), hack.getters.gp.gWorld.mid.addChild(o)),
-				hack.getters.me.ray.update(),
-				hack.getters.me.ray.result.reset(),
-				hack.getters.me.ray.hitPoint = [Infinity, Infinity],
-				hack.getters.gp.pWorld.raycast(hack.getters.me.ray.result, hack.getters.me.ray)) {
-				hack.getters.me.ray.result.getHitPoint(hack.getters.me.ray.hitPoint, hack.getters.me.ray);
-				s = hack.getters.me.ray.result.getHitDistance(hack.getters.me.ray);
-				if ((hack.getters.me.ray.result.shape.ref.getCollision()) && (s < 0.05)) {
-					hack.getters.me.p.velocity[1] = 8;
+				hack.getters.ray.update(),
+				hack.getters.ray.result.reset(),
+				hack.getters.ray.hitPoint = [Infinity, Infinity],
+				hack.getters.gp.pWorld.raycast(hack.getters.ray.result, hack.getters.ray)) {
+				hack.getters.ray.result.getHitPoint(hack.getters.ray.hitPoint, hack.getters.ray);
+				s = hack.getters.ray.result.getHitDistance(hack.getters.ray);
+				if ((hack.getters.ray.result.shape.ref.getCollision()) && (s < 0.05)) {
+					hack.getters.velocity[1] = 8;
 					break
 				}
 			}
 		}
-	if (hack.vars.ghost1) {
+	if (hack.vars.ghost1 || hack.vars.ghost2) {
 		if (hack.getters.mode.moveUp) {
-			hack.getters.me.p.velocity[1] = hack.vars.udSpd * hack.vars.mult
+			hack.getters.velocity[1] = hack.vars.udSpd * hack.vars.mult
 		}
 		if (hack.getters.mode.moveDown) {
-			hack.getters.me.p.velocity[1] = -hack.vars.udSpd * hack.vars.mult
+			hack.getters.velocity[1] = -hack.vars.udSpd * hack.vars.mult
 		}
-		hack.getters.mode.moveUp || hack.getters.mode.moveDown || (hack.getters.me.p.velocity[1] = 0)
+		hack.getters.mode.moveUp || hack.getters.mode.moveDown || (hack.getters.velocity[1] = 0)
 	}
 }
