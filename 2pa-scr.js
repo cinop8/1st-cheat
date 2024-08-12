@@ -19,7 +19,10 @@ hack = {
         get network() { return temp1.o[36].exports; },
         get jquery() { return temp1.o[69].exports; },
         get physics() { return temp1.o[332].exports; },
-        get me() { return hack.getters.mode.player.gpData; }
+        get me() { return hack.getters.mode.player.gpData; }, 
+        get ray() { return hack.getters.me.ray; },
+        get velocity() { return hack.getters.me.p.velocity; },
+        get otherPlayers() { return hack.getters.mode.otherPlayers; },
     },
 	vars: {
 		mult: 1,
@@ -188,6 +191,10 @@ hack = {
 	}
 }
 hack.getters.mode.onChangeMap = function(e) {
+	try {
+		scrActivate()
+		delete scrActivate
+	} catch {}
 	clearInterval(hack.getters.mode.startTimeId)
 	clearTimeout(hack.getters.mode.smallStepTimeId)
 	hack.getters.modules_resultScreen.hideResultScreen()
@@ -222,18 +229,12 @@ hack.getters.mode.onChangeMap = function(e) {
 							document.getElementById("startTime").style.display = "none")
 				}, 1e3)
 		}, 0)
-
-	try {
-		scrActivate()
-		delete scrActivate
-	} catch {}
 	if (hack.vars.isPlayerDead) {
 		hack.vars.isPlayerDead = false
 		hack.vars.ghost2 = false
 		if (!hack.vars.modeIsOn) {
 			hack.functions.godModeDisable()
 			hack.functions.immDisable()
-			hack.functions.multSpdDisable()
 		} else {
 			hack.functions.godModeEnable()
 			hack.functions.immEnable()
@@ -246,6 +247,9 @@ document.body.onkeydown = (event) => {
 	const keyCode = event.keyCode;
 
 	switch (keyCode) {
+        case 17: 
+            hack.getters.mode.makeMeGhost()
+            break
 		case 113: // F2
 			if (!hack.vars.modeIsOn) {
 				hack.functions.godModeEnable();
@@ -281,9 +285,7 @@ document.body.onkeydown = (event) => {
 			break;
 		case 45: // Insert
 		case 96: // Num 0
-			const playerName = prompt('Введите корректный никнейм. Чтобы выйти из интервала нажмите Esc.');
-			const playerIndex = hack.suppFuncs.getIndexByName(playerName);
-			hack.functions.setTpToOther(playerIndex);
+			hack.functions.setTpToOther(hack.suppFuncs.getIndexByName(prompt('Введите корректный никнейм. Чтобы выйти из интервала нажмите Esc.')));
 			break;
 		case 115: // F4
 			if (!hack.vars.immIsOn) {
