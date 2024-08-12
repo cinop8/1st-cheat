@@ -108,13 +108,10 @@ hack = {
 				hack.getters.me.p.gravityScale = 0
 				hack.getters.velocity[0] = 0
 				hack.getters.velocity[1] = 0
-				hack.functions.godModeEnable()
 				hack.functions.immEnable()
-				hack.vars.ghost2 = true
+                hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
-				if (!hack.vars.multSpdIsOn) {
-					hack.functions.multSpdEnable()
-				}
+				if (!hack.vars.multSpdIsOn) {hack.functions.multSpdEnable()}
 				hack.getters.rGho.fire(hack.getters.network.gsSocket)
 				hack.getters.mode.md.mobile() && hack.getters.mode.setupTouchButtons(!0)
 			}
@@ -238,7 +235,6 @@ hack.getters.mode.onChangeMap = function(e) {
 		} else {
 			hack.functions.godModeEnable()
 			hack.functions.immEnable()
-			hack.getters.me.p.collisionResponse = false
 		}
 	}
 
