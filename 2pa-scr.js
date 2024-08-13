@@ -40,6 +40,7 @@ hack = {
 		delay: 1000,
 		inter: 250,
 		get mass() {return hack.getters.me.p.mass},
+		get invMass() {return hack.getters.me.p.invMass},
 		get collisionResponse() {return hack.getters.me.p.collisionResponse}
 	},
 	suppFuncs: {
@@ -108,7 +109,8 @@ hack = {
 				hack.getters.velocity[0] = 0
 				hack.getters.velocity[1] = 0
 				hack.functions.immEnable()
-                                hack.vars.ghost2 = true
+                hack.functions.godModeEnable()
+                hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
 				if (!hack.vars.multSpdIsOn) {hack.functions.multSpdEnable()}
 				hack.getters.rGho.fire(hack.getters.network.gsSocket)
@@ -247,10 +249,8 @@ hack.getters.mode.onChangeMap = function(e) {
 		}
 	}
 }
-
 document.body.onkeydown = (event) => {
 	const keyCode = event.keyCode;
-
 	switch (keyCode) {
 		case 17:
 			hack.getters.mode.makeMeGhost()
@@ -303,7 +303,6 @@ document.body.onkeydown = (event) => {
 			break;
 	}
 };
-
 function scrActivate() {
 	Object.defineProperty(hack.vars, 'inter', {
 		enumerable: false
@@ -329,7 +328,6 @@ function scrActivate() {
 	document.getElementById('leaderboard').style.opacity = 0.7
 	document.getElementById('mapCredits').style.opacity = 0.7
 }
-
 hack.getters.mode.playerMovement = function(e) {
 	if (hack.getters.mode.moveRight && (hack.getters.velocity[0] = hack.vars.lrSpd * hack.vars.mult),
 		hack.getters.mode.moveLeft && (hack.getters.velocity[0] = -hack.vars.lrSpd * hack.vars.mult),
