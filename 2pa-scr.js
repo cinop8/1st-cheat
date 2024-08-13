@@ -108,8 +108,7 @@ hack = {
 				hack.getters.velocity[0] = 0
 				hack.getters.velocity[1] = 0
 				hack.functions.immEnable()
-                hack.functions.godModeEnable()
-                hack.vars.ghost2 = true
+                                hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
 				if (!hack.vars.multSpdIsOn) {hack.functions.multSpdEnable()}
 				hack.getters.rGho.fire(hack.getters.network.gsSocket)
