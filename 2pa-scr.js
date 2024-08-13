@@ -229,15 +229,24 @@ hack.getters.mode.onChangeMap = function(e) {
 		}, 0)
 	if (hack.vars.isPlayerDead) {
 		hack.vars.isPlayerDead = false
-        hack.vars.ghost2 = false
+		hack.vars.ghost2 = false
 		if (!hack.vars.modeIsOn) {
 			hack.functions.godModeDisable()
-            hack.functions.immDisable()
-		} if (hack.vars.modeIsOn) {
+			hack.functions.immDisable()
+		}
+		if (hack.vars.modeIsOn) {
 			hack.functions.godModeEnable()
-        } if (hack.vars.immIsOn) {
+		}
+		if (hack.vars.immIsOn) {
 			hack.functions.immEnable()
-        }
+		}
+	} else {
+		if (hack.vars.modeIsOn) {
+			hack.functions.godModeEnable()
+		}
+		if (hack.vars.immIsOn) {
+			hack.functions.immEnable()
+		}
 	}
 }
 
