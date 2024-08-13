@@ -109,6 +109,7 @@ hack = {
 				hack.getters.velocity[0] = 0
 				hack.getters.velocity[1] = 0
 				hack.functions.immEnable()
+                hack.functions.godModeEnable()
                 hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
 				if (!hack.vars.multSpdIsOn) {hack.functions.multSpdEnable()}
@@ -228,24 +229,25 @@ hack.getters.mode.onChangeMap = function(e) {
 		}, 0)
 	if (hack.vars.isPlayerDead) {
 		hack.vars.isPlayerDead = false
-		hack.vars.ghost2 = false
+        hack.vars.ghost2 = false
 		if (!hack.vars.modeIsOn) {
 			hack.functions.godModeDisable()
-			hack.functions.immDisable()
-		} else {
+            hack.functions.immDisable()
+		} if (hack.vars.modeIsOn) {
 			hack.functions.godModeEnable()
+        } if (hack.vars.immIsOn) {
 			hack.functions.immEnable()
-		}
+        }
 	}
-
 }
+
 document.body.onkeydown = (event) => {
 	const keyCode = event.keyCode;
 
 	switch (keyCode) {
-        case 17: 
-            hack.getters.mode.makeMeGhost()
-            break
+		case 17:
+			hack.getters.mode.makeMeGhost()
+			break
 		case 113: // F2
 			if (!hack.vars.modeIsOn) {
 				hack.functions.godModeEnable();
@@ -294,7 +296,6 @@ document.body.onkeydown = (event) => {
 			break;
 	}
 };
-
 
 function scrActivate() {
 	Object.defineProperty(hack.vars, 'inter', {
