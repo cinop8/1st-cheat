@@ -40,7 +40,6 @@ hack = {
 		delay: 1000,
 		inter: 250,
 		get mass() {return hack.getters.me.p.mass},
-		get invMass() {return hack.getters.me.p.invMass},
 		get collisionResponse() {return hack.getters.me.p.collisionResponse}
 	},
 	suppFuncs: {
