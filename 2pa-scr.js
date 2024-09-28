@@ -1,4 +1,4 @@
-hack = {
+(function() {let hack = {
 	getters: {
         get client() { return temp1.o[1].exports; },
         get gf() { return temp1.o[5].exports; },
@@ -374,3 +374,4 @@ hack.getters.mode.playerMovement = function(e) {
 		hack.getters.mode.moveUp || hack.getters.mode.moveDown || (hack.getters.velocity[1] = 0)
 	}
 }
+	    })()
