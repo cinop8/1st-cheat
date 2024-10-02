@@ -1,4 +1,4 @@
-(function() {let hack = {
+(function() {let let hack = {
 	getters: {
         get client() { return temp1.o[1].exports; },
         get gf() { return temp1.o[5].exports; },
@@ -108,10 +108,9 @@
 				hack.getters.velocity[0] = 0
 				hack.getters.velocity[1] = 0
 				hack.functions.immEnable()
-                hack.functions.godModeEnable()
                 hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
-				if (!hack.vars.multSpdIsOn) {hack.functions.multSpdEnable()}
+				if (hack.vars.multSpdIsOn) {hack.functions.multSpdDisable()}
 				hack.getters.rGho.fire(hack.getters.network.gsSocket)
 				hack.getters.mode.md.mobile() && hack.getters.mode.setupTouchButtons(!0)
 			}
