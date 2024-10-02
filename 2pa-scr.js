@@ -1,4 +1,4 @@
-(function() {let let hack = {
+(function() {let hack = {
 	getters: {
         get client() { return temp1.o[1].exports; },
         get gf() { return temp1.o[5].exports; },
@@ -110,7 +110,6 @@
 				hack.functions.immEnable()
                 hack.vars.ghost2 = true
 				hack.vars.isPlayerDead = true
-				if (hack.vars.multSpdIsOn) {hack.functions.multSpdDisable()}
 				hack.getters.rGho.fire(hack.getters.network.gsSocket)
 				hack.getters.mode.md.mobile() && hack.getters.mode.setupTouchButtons(!0)
 			}
@@ -225,27 +224,19 @@ hack.getters.mode.onChangeMap = function(e) {
 							document.getElementById("startTime").style.display = "none")
 				}, 1e3)
 		}, 0)
-	if (hack.vars.isPlayerDead) {
-		hack.vars.isPlayerDead = false
-		hack.vars.ghost2 = false
-		if (!hack.vars.modeIsOn) {
-			hack.functions.godModeDisable()
-			hack.functions.immDisable()
-		}
-		if (hack.vars.modeIsOn) {
-			hack.functions.godModeEnable()
-		}
-		if (hack.vars.immIsOn) {
-			hack.functions.immEnable()
-		}
+	if (hack.vars.modeIsOn) {
+		hack.functions.godModeEnable()
 	} else {
-		if (hack.vars.modeIsOn) {
-			hack.functions.godModeEnable()
-		}
-		if (hack.vars.immIsOn) {
-			hack.functions.immEnable()
-		}
+		hack.functions.godModeDisable()
 	}
+	if (hack.vars.immIsOn) {
+		hack.functions.immEnable()
+	} else {
+		hack.functions.immDisable()
+	}
+	hack.vars.ghost2 = false
+	hack.vars.isPlayerDead = false
+
 }
 document.body.onkeydown = (event) => {
 	const keyCode = event.keyCode;
